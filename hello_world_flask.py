@@ -4,12 +4,27 @@ from flask_restful import Api, Resource
 
 app = Flask(__name__)
 
-api = Api(hello_world_flask)
+# api = Api(hello_world_flask)
+api = Api(app)
 
+def checkPostedData(postedData, functionName):
+    if "x" not in postedData or "y" not in postedData:
+        return 3001
+    else:
+        return 200
 
 class Add(Resource):
     def post(self):
         postedData = request.get_json()
+
+        status_code = checkPostedData(postedData, "add")
+        if (status_code != 200):
+            retJSON = {
+                "Message":"An error happened !",
+                "Status Code":status_code
+            }
+            return jsonify(retJSON)
+
         x = postedData["x"]
         y = postedData["y"]
         x = int(x)
@@ -21,7 +36,7 @@ class Add(Resource):
         }
         return jsonify(retMap)
 
-api = add_resource(Add, "/add")
+api.add_resource(Add, "/add")
 
 
 
